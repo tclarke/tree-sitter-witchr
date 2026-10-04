@@ -1,0 +1,365 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "witchr",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "tape_header"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "fixed_point"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "memory_order"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "control_order"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "arithmetic_order"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "newline"
+          }
+        ]
+      }
+    },
+    "comment": {
+      "type": "PATTERN",
+      "value": ";[^\\n]*"
+    },
+    "newline": {
+      "type": "STRING",
+      "value": "\n"
+    },
+    "tape_header": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "tape_name"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tape_mode"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "tape_name": {
+      "type": "PATTERN",
+      "value": "\"[^\"]+\""
+    },
+    "tape_mode": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "(straight)"
+        },
+        {
+          "type": "STRING",
+          "value": "(looped)"
+        }
+      ]
+    },
+    "fixed_point": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "+"
+              },
+              {
+                "type": "STRING",
+                "value": "-"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{7}"
+          }
+        ]
+      }
+    },
+    "memory_order": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{5}"
+          }
+        ]
+      }
+    },
+    "control_order": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "op_noop"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_finish"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_signal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_sign_test"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_transfer"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_search"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_layout"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "op_shift"
+        }
+      ]
+    },
+    "op_noop": {
+      "type": "STRING",
+      "value": "00000"
+    },
+    "op_finish": {
+      "type": "STRING",
+      "value": "00100"
+    },
+    "op_signal": {
+      "type": "STRING",
+      "value": "00200"
+    },
+    "op_sign_test": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "01"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "1"
+              },
+              {
+                "type": "STRING",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{2}"
+          }
+        ]
+      }
+    },
+    "op_transfer": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "02"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "1"
+              },
+              {
+                "type": "STRING",
+                "value": "2"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{2}"
+          }
+        ]
+      }
+    },
+    "op_search": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "0"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "3"
+              },
+              {
+                "type": "STRING",
+                "value": "5"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{2}"
+          }
+        ]
+      }
+    },
+    "op_layout": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "07"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "\\d{2}"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "op_shift": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "08"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d"
+          },
+          {
+            "type": "STRING",
+            "value": "00"
+          }
+        ]
+      }
+    },
+    "arithmetic_order": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[1-7]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{2}"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\d{2}"
+          }
+        ]
+      }
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "[ \\t\\r]"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}
